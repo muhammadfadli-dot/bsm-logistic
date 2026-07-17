@@ -14,7 +14,12 @@ const starterItems: Item[] = [
   { id: 4, date: '14 Jul 2026', sender: 'UD Berkah Abadi', senderPhone: '0812-7744-2001', receiver: 'Lestari Mart', receiverPhone: '0818-2003-7631', type: 'FMCG', name: 'Kardus Produk Makanan', quantity: 80, zone: 'Zona 2', weight: 980, vehicle: 'Box', sku: 'BSM-FM-22130', destination: 'Tangerang', status: 'Prepared' },
 ]
 
-const zones = [{ name: 'Zona 1', used: 43 }, { name: 'Zona 2', used: 67 }, { name: 'Zona 3', used: 84 }, { name: 'Zona 4', used: 29 }, { name: 'Zona 5', used: 91 }]
+const zones = [
+  { name: 'Zona 1', used: 43 }, { name: 'Zona 2', used: 67 },
+  { name: 'Zona 3', used: 84 }, { name: 'Zona 4', used: 29 },
+  { name: 'Zona 5', used: 91 }, { name: 'Zona 6', used: 18 },
+  { name: 'Zona 7', used: 0 }, { name: 'Zona 8', used: 0 },
+]
 const fields = ['sender', 'senderPhone', 'receiver', 'receiverPhone', 'type', 'name', 'quantity', 'zone', 'weight', 'vehicle', 'sku', 'destination'] as const
 
 function statusClass(status: Status) { return status === 'Shipped' ? 'bg-emerald-100 text-emerald-700' : status === 'In Delivery' ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700' }
