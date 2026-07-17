@@ -1,65 +1,75 @@
-import Image from "next/image";
+'use client'
+
+import { FormEvent, useMemo, useState } from 'react'
+import { Boxes, ChevronDown, Download, Edit3, Eye, LogOut, PackagePlus, Plus, Search, Trash2, Truck, X } from 'lucide-react'
+
+type Role = 'admin' | 'operator'
+type Status = 'Prepared' | 'Shipped' | 'In Delivery'
+type Item = { id: number; date: string; sender: string; senderPhone: string; receiver: string; receiverPhone: string; type: string; name: string; quantity: number; zone: string; weight: number; vehicle: string; sku: string; destination: string; status: Status }
+
+const starterItems: Item[] = [
+  { id: 1, date: '17 Jul 2026', sender: 'PT Nusantara Jaya', senderPhone: '0812-4567-8901', receiver: 'Toko Maju Bersama', receiverPhone: '0813-9921-4400', type: 'Elektronik', name: 'Kipas Angin Industrial', quantity: 24, zone: 'Zona 1', weight: 860, vehicle: 'Box', sku: 'BSM-EL-24017', destination: 'Jakarta Selatan', status: 'Prepared' },
+  { id: 2, date: '16 Jul 2026', sender: 'CV Sumber Makmur', senderPhone: '0819-3321-8200', receiver: 'Koperasi Sejahtera', receiverPhone: '0821-8890-6621', type: 'FMCG', name: 'Paket Minuman Kemasan', quantity: 120, zone: 'Zona 3', weight: 1450, vehicle: 'Truk Engkel', sku: 'BSM-FM-19022', destination: 'Bandung', status: 'Shipped' },
+  { id: 3, date: '15 Jul 2026', sender: 'PT Prima Karya', senderPhone: '0852-1200-3411', receiver: 'Bintang Jaya Store', receiverPhone: '0878-1102-8720', type: 'Peralatan', name: 'Rak Display Besi', quantity: 12, zone: 'Zona 5', weight: 2220, vehicle: 'Truk CDD', sku: 'BSM-PR-77018', destination: 'Surabaya', status: 'In Delivery' },
+  { id: 4, date: '14 Jul 2026', sender: 'UD Berkah Abadi', senderPhone: '0812-7744-2001', receiver: 'Lestari Mart', receiverPhone: '0818-2003-7631', type: 'FMCG', name: 'Kardus Produk Makanan', quantity: 80, zone: 'Zona 2', weight: 980, vehicle: 'Box', sku: 'BSM-FM-22130', destination: 'Tangerang', status: 'Prepared' },
+]
+
+const zones = [{ name: 'Zona 1', used: 43 }, { name: 'Zona 2', used: 67 }, { name: 'Zona 3', used: 84 }, { name: 'Zona 4', used: 29 }, { name: 'Zona 5', used: 91 }]
+const fields = ['sender', 'senderPhone', 'receiver', 'receiverPhone', 'type', 'name', 'quantity', 'zone', 'weight', 'vehicle', 'sku', 'destination'] as const
+
+function statusClass(status: Status) { return status === 'Shipped' ? 'bg-emerald-100 text-emerald-700' : status === 'In Delivery' ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700' }
+function zoneColor(used: number) { return used > 85 ? 'bg-rose-500' : used >= 60 ? 'bg-amber-400' : 'bg-emerald-500' }
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+  const [role, setRole] = useState<Role | null>(null)
+  const [items, setItems] = useState(starterItems)
+  const [search, setSearch] = useState('')
+  const [tab, setTab] = useState<'warehouse' | 'status'>('warehouse')
+  const [modal, setModal] = useState<'input' | 'zone' | 'status' | 'document' | null>(null)
+  const [selected, setSelected] = useState<Item | null>(null)
+
+  const shown = useMemo(() => items.filter((item) => `${item.sender} ${item.receiver} ${item.name} ${item.sku}`.toLowerCase().includes(search.toLowerCase())), [items, search])
+  const openStatus = (item: Item) => { setSelected(item); setModal('status') }
+  const openDocument = (item: Item) => { setSelected(item); setModal('document') }
+  const deleteItem = (id: number) => setItems((all) => all.filter((item) => item.id !== id))
+
+  if (!role) return <Login onLogin={setRole} />
+  const isAdmin = role === 'admin'
+  const tableItems = !isAdmin && tab === 'status' ? shown.filter((item) => item.status !== 'Prepared') : shown
+
+  return <main className="min-h-screen bg-[#f5f8f6] text-slate-800">
+    <header className="sticky top-0 z-20 border-b border-emerald-100 bg-white/95 px-5 py-4 backdrop-blur lg:px-10">
+      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-4">
+        <div className="flex items-center gap-3"><Brand /><div className="hidden border-l border-slate-200 pl-3 sm:block"><p className="text-sm font-semibold">Warehouse Management System</p><p className="text-xs text-slate-400">Kelola logistik dengan lebih terkendali</p></div></div>
+        <div className="flex items-center gap-3"><div className="hidden text-right sm:block"><p className="text-sm font-bold">Hello, {isAdmin ? 'Admin' : 'Operator'}</p><p className="text-xs text-slate-400">BSM Mandiri Logistic</p></div><button onClick={() => setRole(null)} className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"><LogOut size={16}/> <span className="hidden sm:inline">Logout</span></button></div>
+      </div>
+    </header>
+    <section className="mx-auto max-w-[1500px] px-5 py-8 lg:px-10">
+      <div className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-end"><div><p className="mb-2 text-sm font-bold uppercase tracking-[.18em] text-emerald-600">Dashboard / {isAdmin ? 'Data Gudang' : tab === 'warehouse' ? 'Data Gudang' : 'Status Pengiriman'}</p><h1 className="text-3xl font-extrabold tracking-tight">{isAdmin ? 'Data Gudang' : tab === 'warehouse' ? 'Data Gudang' : 'Data Status Barang'}</h1><p className="mt-2 text-sm text-slate-500">Pantau pergerakan barang dan aktivitas gudang secara real-time.</p></div>
+        <div className="flex flex-wrap items-center gap-3">{isAdmin && <button onClick={() => setModal('input')} className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700"><Plus size={18}/> Input Barang</button>}<label className="flex min-w-64 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3"><Search size={18} className="text-slate-400"/><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari nama barang, SKU..." className="w-full outline-none placeholder:text-slate-400"/></label></div>
+      </div>
+      {!isAdmin && <div className="mb-6 flex w-fit rounded-xl bg-emerald-50 p-1"><button onClick={() => setTab('warehouse')} className={`rounded-lg px-4 py-2 text-sm font-bold ${tab === 'warehouse' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500'}`}>Data Gudang</button><button onClick={() => setTab('status')} className={`rounded-lg px-4 py-2 text-sm font-bold ${tab === 'status' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500'}`}>Data Status Barang</button></div>}
+      <Summary items={items} />
+      <section className="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><div className="flex items-center justify-between border-b border-slate-100 px-5 py-4"><div><h2 className="font-bold">{tab === 'status' ? 'Pengiriman Aktif' : 'Daftar Barang'}</h2><p className="text-xs text-slate-400">{tableItems.length} data ditampilkan</p></div><button className="flex items-center gap-1 text-sm font-semibold text-emerald-700">Urutkan terbaru <ChevronDown size={16}/></button></div><ItemTable items={tableItems} isAdmin={isAdmin} showStatus={!isAdmin && tab === 'status'} onStatus={openStatus} onDocument={openDocument} onDelete={deleteItem}/></section>
+      <div className="fixed bottom-6 right-6 z-10 flex flex-col gap-3">{isAdmin ? <><button onClick={() => setModal('zone')} className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-xl"><Boxes size={17}/> Kapasitas Zona</button><button onClick={() => setModal('input')} className="flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-xl"><PackagePlus size={17}/> Input Barang</button></> : <><button onClick={() => setTab('status')} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-xl">Data Status Barang</button><button onClick={() => openStatus(items[0])} className="flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-bold text-white shadow-xl"><Truck size={17}/> Update Status</button></>}</div>
+    </section>
+    {modal === 'input' && <InputModal onClose={() => setModal(null)} onSave={(item) => { setItems((all) => [{ ...item, id: Date.now(), status: 'Prepared' }, ...all]); setModal(null) }} />}
+    {modal === 'zone' && <ZoneModal onClose={() => setModal(null)} />}
+    {modal === 'status' && selected && <StatusModal item={selected} onClose={() => setModal(null)} onSave={(status) => { setItems((all) => all.map((item) => item.id === selected.id ? { ...item, status } : item)); setModal(null) }} />}
+    {modal === 'document' && selected && <DocumentModal item={selected} onClose={() => setModal(null)} />}
+  </main>
 }
+
+function Brand() { return <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-200"><Boxes size={23}/></div> }
+function Login({ onLogin }: { onLogin: (role: Role) => void }) { const [role, setRole] = useState<Role>('admin'); const [error, setError] = useState(''); const submit = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); const form = new FormData(e.currentTarget); if (!form.get('username') || !form.get('password')) return setError('Username dan password wajib diisi.'); onLogin(role) }; return <main className="grid min-h-screen lg:grid-cols-2"><section className="relative hidden overflow-hidden bg-emerald-950 p-14 text-white lg:flex lg:flex-col lg:justify-between"><div className="absolute inset-0 opacity-20" style={{backgroundImage:'radial-gradient(circle at 20% 20%, #63d391 0, transparent 28%), radial-gradient(circle at 80% 80%, #1c9a65 0, transparent 32%)'}}/><div className="relative flex items-center gap-3"><Brand/><div><b>BSM Mandiri</b><p className="text-sm text-emerald-200">Logistic</p></div></div><div className="relative"><div className="mb-7 flex h-24 w-24 items-center justify-center rounded-3xl bg-white/10"><Truck size={52}/></div><h1 className="max-w-lg text-5xl font-extrabold leading-tight">Pengelolaan gudang yang lebih sederhana.</h1><p className="mt-5 max-w-md leading-7 text-emerald-100">Satu platform untuk memantau stok, mengatur zona penyimpanan, dan mengelola pengiriman Anda.</p></div><p className="relative text-sm text-emerald-300">© 2026 BSM Mandiri Logistic</p></section><section className="flex items-center justify-center bg-[#f7faf8] p-6"><form onSubmit={submit} className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl shadow-emerald-950/5 sm:p-10"><div className="mb-9 lg:hidden"><Brand/></div><p className="text-sm font-bold uppercase tracking-[.2em] text-emerald-600">Selamat datang</p><h2 className="mt-2 text-3xl font-extrabold">Masuk ke BSM Logistic</h2><p className="mt-2 text-sm text-slate-500">Gunakan akun gudang Anda untuk melanjutkan.</p><div className="mt-7"><label className="text-sm font-bold">Username</label><input name="username" placeholder="Masukkan username" className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-500"/></div><div className="mt-5"><label className="text-sm font-bold">Password</label><input name="password" type="password" placeholder="Masukkan password" className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:border-emerald-500"/></div><div className="mt-5"><label className="text-sm font-bold">Pilih User Role</label><div className="mt-2 grid grid-cols-2 rounded-xl bg-slate-100 p-1"><button type="button" onClick={() => setRole('admin')} className={`rounded-lg py-2.5 text-sm font-bold ${role === 'admin' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500'}`}>Admin</button><button type="button" onClick={() => setRole('operator')} className={`rounded-lg py-2.5 text-sm font-bold ${role === 'operator' ? 'bg-white text-emerald-700 shadow-sm' : 'text-slate-500'}`}>Operator</button></div></div>{error && <p className="mt-4 text-sm text-rose-600">{error}</p>}<button className="mt-7 w-full rounded-xl bg-emerald-600 py-3.5 font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">Login sebagai {role === 'admin' ? 'Admin' : 'Operator'}</button><p className="mt-5 text-center text-xs text-slate-400">Demo: gunakan sembarang username dan password.</p></form></section></main> }
+function Summary({ items }: { items: Item[] }) { const weight = items.reduce((sum, item) => sum + item.weight, 0); return <div className="grid gap-4 sm:grid-cols-3"><Stat label="Total Barang" value={items.length.toString()} note="Data tersimpan"/><Stat label="Total Berat" value={`${(weight / 1000).toFixed(1)} Ton`} note="Kapasitas terpakai"/><Stat label="Dalam Pengiriman" value={items.filter((item) => item.status === 'In Delivery').length.toString()} note="Barang aktif"/></div> }
+function Stat({ label, value, note }: { label: string; value: string; note: string }) { return <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-3xl font-extrabold">{value}</p><p className="mt-1 text-xs font-semibold text-emerald-600">{note}</p></div> }
+function ItemTable({ items, isAdmin, showStatus, onStatus, onDocument, onDelete }: { items: Item[]; isAdmin: boolean; showStatus: boolean; onStatus: (item: Item) => void; onDocument: (item: Item) => void; onDelete: (id: number) => void }) { return <div className="overflow-x-auto"><table className="min-w-[1150px] w-full text-left text-sm"><thead className="bg-emerald-50 text-xs uppercase tracking-wide text-emerald-800"><tr>{['Tanggal','Pengirim','No. HP Pengirim','Penerima','Nama Barang','Jumlah','Zona','Berat','SKU','Tujuan', ...(showStatus ? ['Status'] : []),'Action'].map((h) => <th className="px-4 py-4 font-bold" key={h}>{h}</th>)}</tr></thead><tbody>{items.map((item, index) => <tr key={item.id} className={index % 2 ? 'bg-slate-50/70' : 'bg-white'}><td className="px-4 py-4 whitespace-nowrap text-slate-500">{item.date}</td><td className="px-4 py-4 font-semibold">{item.sender}</td><td className="px-4 py-4 text-slate-500">{item.senderPhone}</td><td className="px-4 py-4">{item.receiver}</td><td className="px-4 py-4 font-semibold">{item.name}</td><td className="px-4 py-4">{item.quantity}</td><td className="px-4 py-4"><span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700">{item.zone}</span></td><td className="px-4 py-4">{item.weight.toLocaleString()} kg</td><td className="px-4 py-4 font-mono text-xs">{item.sku}</td><td className="px-4 py-4">{item.destination}</td>{showStatus && <td className="px-4 py-4"><span className={`whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold ${statusClass(item.status)}`}>{item.status}</span></td>}<td className="px-4 py-4"><div className="flex gap-2">{isAdmin ? <><button onClick={() => onStatus(item)} className="rounded-lg bg-sky-50 p-2 text-sky-700"><Edit3 size={15}/></button><button onClick={() => onDelete(item.id)} className="rounded-lg bg-rose-50 p-2 text-rose-600"><Trash2 size={15}/></button></> : <><button onClick={() => onStatus(item)} className="rounded-lg bg-sky-50 p-2 text-sky-700"><Eye size={15}/></button>{showStatus && <button onClick={() => onDocument(item)} className="rounded-lg bg-emerald-50 p-2 text-emerald-700"><Download size={15}/></button>}</>}</div></td></tr>)}</tbody></table></div> }
+function Modal({ title, subtitle, children, onClose }: { title: string; subtitle: string; children: React.ReactNode; onClose: () => void }) { return <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-sm"><section className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-2xl bg-white shadow-2xl"><header className="flex items-start justify-between border-b border-slate-100 p-6"><div><h3 className="text-xl font-extrabold">{title}</h3><p className="mt-1 text-sm text-slate-500">{subtitle}</p></div><button onClick={onClose} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><X size={20}/></button></header>{children}</section></div> }
+function InputModal({ onClose, onSave }: { onClose: () => void; onSave: (item: Omit<Item, 'id' | 'status'>) => void }) { const submit = (e: FormEvent<HTMLFormElement>) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.currentTarget)); onSave({ date: String(d.date), sender: String(d.sender), senderPhone: String(d.senderPhone), receiver: String(d.receiver), receiverPhone: String(d.receiverPhone), type: String(d.type), name: String(d.name), quantity: Number(d.quantity), zone: String(d.zone), weight: Number(d.weight), vehicle: String(d.vehicle), sku: String(d.sku), destination: String(d.destination) }) }; return <Modal title="Input Data Barang" subtitle="Lengkapi data barang untuk menambahkan stok gudang." onClose={onClose}><form onSubmit={submit} className="p-6"><div className="grid gap-4 sm:grid-cols-2"><Input label="Tanggal" name="date" type="date"/><Input label="Pengirim" name="sender"/><Input label="No. HP Pengirim" name="senderPhone" type="tel"/><Input label="Penerima" name="receiver"/><Input label="No. HP Penerima" name="receiverPhone" type="tel"/><Input label="Tipe Barang" name="type" placeholder="Contoh: Elektronik"/><Input label="Nama Barang" name="name"/><Input label="Jumlah" name="quantity" type="number"/><Select label="Zona Penyimpanan" name="zone" options={['Zona 1','Zona 2','Zona 3','Zona 4','Zona 5','Zona 6','Zona 7','Zona 8']}/><Input label="Berat (kg)" name="weight" type="number"/><Input label="Jenis Kendaraan" name="vehicle"/><Input label="SKU Number" name="sku"/><Input label="Tujuan" name="destination"/></div><div className="mt-6 flex justify-end gap-3"><button type="button" onClick={onClose} className="rounded-xl px-5 py-3 text-sm font-bold text-slate-500">Batal</button><button className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white">Save Barang</button></div></form></Modal> }
+function Input({ label, name, type = 'text', placeholder }: { label: string; name: string; type?: string; placeholder?: string }) { return <label className="text-sm font-bold text-slate-700">{label}<input required name={name} type={type} placeholder={placeholder} className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2.5 font-normal outline-none focus:border-emerald-500"/></label> }
+function Select({ label, name, options }: { label: string; name: string; options: string[] }) { return <label className="text-sm font-bold text-slate-700">{label}<select required name={name} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 font-normal outline-none focus:border-emerald-500">{options.map((option) => <option key={option}>{option}</option>)}</select></label> }
+function ZoneModal({ onClose }: { onClose: () => void }) { return <Modal title="Kapasitas Gudang" subtitle="Setiap zona memiliki kapasitas maksimal ±6.000 kg." onClose={onClose}><div className="p-6"><div className="mb-5 flex justify-end gap-2"><select className="rounded-lg border border-slate-200 px-3 py-2 text-sm"><option>Data Terbaru</option><option>Data Terlama</option></select><button className="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-bold text-white">Terapkan Filter</button></div><div className="space-y-4">{zones.map((zone) => <div key={zone.name} className="rounded-xl border border-slate-100 p-4"><div className="mb-3 flex justify-between"><b>{zone.name}</b><span className="text-sm text-slate-500">{zone.used}% · {(zone.used * 60).toLocaleString()} / 6.000 kg</span></div><div className="h-3 overflow-hidden rounded-full bg-slate-100"><div className={`h-full rounded-full ${zoneColor(zone.used)}`} style={{ width: `${zone.used}%` }}/></div></div>)}</div><p className="mt-5 text-xs text-slate-400">Hijau: aman · Kuning: perlu perhatian · Merah: mendekati penuh</p></div></Modal> }
+function StatusModal({ item, onClose, onSave }: { item: Item; onClose: () => void; onSave: (status: Status) => void }) { const [status, setStatus] = useState<Status>(item.status); return <Modal title="Update Status Barang" subtitle="Perbarui status pengiriman barang yang dipilih." onClose={onClose}><div className="p-6"><div className="grid gap-3 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-2">{fields.filter((f) => ['sender','receiver','name','quantity','zone','weight','sku','destination'].includes(f)).map((f) => <p key={f}><span className="capitalize text-slate-400">{f.replace(/([A-Z])/g, ' $1')}: </span><b>{String(item[f])}</b></p>)}</div><p className="mb-3 mt-6 text-sm font-bold">Status Pengiriman</p><div className="grid gap-3 sm:grid-cols-3">{(['Prepared','Shipped','In Delivery'] as Status[]).map((state) => <button key={state} onClick={() => setStatus(state)} className={`rounded-xl border p-3 text-sm font-bold ${status === state ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-500'}`}>{state}</button>)}</div><div className="mt-7 flex justify-end"><button onClick={() => onSave(status)} className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-bold text-white">Update Status</button></div></div></Modal> }
+function DocumentModal({ item, onClose }: { item: Item; onClose: () => void }) { return <Modal title="Surat Jalan" subtitle="Dokumen pengiriman BSM Mandiri Logistic." onClose={onClose}><div id="document" className="p-7"><div className="mb-6 flex justify-between border-b-2 border-emerald-600 pb-5"><div><h4 className="text-2xl font-black text-emerald-700">SURAT JALAN</h4><p className="text-sm text-slate-500">BSM Mandiri Logistic</p></div><p className="text-right text-sm"><b>SO ID:</b> SO-{item.id}2607<br/><b>SO No:</b> {item.sku}</p></div><div className="grid gap-5 text-sm sm:grid-cols-2"><Doc label="Tanggal" value={item.date}/><Doc label="Package Type" value={item.type}/><Doc label="SKU No" value={item.sku}/><Doc label="Loading Address" value="Gudang BSM, Jakarta"/><Doc label="Pengirim" value={`${item.sender} · ${item.senderPhone}`}/><Doc label="Penerima" value={`${item.receiver} · ${item.receiverPhone}`}/><Doc label="Tujuan" value={item.destination}/><Doc label="Kendaraan" value={`${item.vehicle} · B 1234 BSM`}/></div><div className="mt-7 rounded-xl bg-slate-50 p-4"><b>{item.name}</b><p>{item.quantity} unit · {item.weight.toLocaleString()} kg · {item.zone}</p></div><div className="mt-7 flex justify-end gap-3 print:hidden"><button onClick={() => window.print()} className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold">Print</button><button onClick={() => window.print()} className="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white"><Download size={16}/> Download PDF</button></div></div></Modal> }
+function Doc({ label, value }: { label: string; value: string }) { return <div><p className="text-xs font-bold uppercase tracking-wide text-slate-400">{label}</p><p className="mt-1 font-semibold">{value}</p></div> }

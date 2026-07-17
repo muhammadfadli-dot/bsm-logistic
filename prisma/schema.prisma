@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  operator
+}
+
+enum Status {
+  prepared
+  shipped
+  in_delivery
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique
+  password_hash String
+  role          Role
+  created_at    DateTime @default(now())
+}
+
+model Barang {
+  id               Int         @id @default(autoincrement())
+  tanggal          DateTime
+  pengirim         String
+  no_hp_pengirim   String
+  penerima         String
+  no_hp_penerima   String
+  tipe_barang      String
+  nama_barang      String
+  jumlah           Int
+  zona             String
+  berat            Float
+  jenis_kendaraan  String
+  sku_number       String      @unique
+  tujuan           String
+  status           Status      @default(prepared)
+  created_at       DateTime    @default(now())
+  surat_jalan      SuratJalan?
+}
+
+model Zona {
+  id               Int    @id @default(autoincrement())
+  nama_zona        String @unique
+  kapasitas_max    Float  @default(6000)
+  kapasitas_terisi Float  @default(0)
+}
+
+model SuratJalan {
+  id                    Int      @id @default(autoincrement())
+  barang_id             Int      @unique
+  barang                Barang   @relation(fields: [barang_id], references: [id])
+  so_id                 String
+  so_no                 String
+  package_type          String
+  loading_address       String
+  nomor_plat_kendaraan  String
+  created_at            DateTime @default(now())
+}
